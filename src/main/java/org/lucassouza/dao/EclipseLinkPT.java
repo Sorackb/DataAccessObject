@@ -10,16 +10,16 @@ import javax.persistence.Query;
 
 /**
  *
- * @author Lucas Souza <sorackb@gmail.com>
+ * @author Lucas Souza [sorackb@gmail.com]
  * @param <A>
  */
-public class EclipseLinkPers<A> implements BasicPers<A> {
+public class EclipseLinkPT<A> implements BasicPT<A> {
 
   protected EntityManagerFactory entityManagerFactory;
   protected EntityManager entityManager;
   protected Class<A> objectClass;
 
-  public EclipseLinkPers(String persistenceUnitName, HashMap<String, String> properties) {
+  public EclipseLinkPT(String persistenceUnitName, HashMap<String, String> properties) {
     this.entityManagerFactory = Persistence.createEntityManagerFactory(
             persistenceUnitName, properties);
     this.entityManager = this.entityManagerFactory.createEntityManager();
@@ -28,6 +28,16 @@ public class EclipseLinkPers<A> implements BasicPers<A> {
   public void create(A object) {
     this.entityManager.getTransaction().begin();
     this.entityManager.persist(object);
+    this.entityManager.getTransaction().commit();
+  }
+
+  public void create(List<A> objectList) {
+    this.entityManager.getTransaction().begin();
+
+    for (A object : objectList) {
+      this.entityManager.persist(object);
+    }
+
     this.entityManager.getTransaction().commit();
   }
 

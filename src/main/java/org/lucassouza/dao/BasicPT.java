@@ -5,12 +5,14 @@ import java.util.List;
 
 /**
  *
- * @author Lucas Souza <sorackb@gmail.com>
+ * @author Lucas Souza [sorackb@gmail.com]
  * @param <A>
  */
-public interface BasicPers<A> {
+public interface BasicPT<A> {
 
   void create(A object);
+
+  void create(List<A> objectList);
 
   A read(Object id);
 
