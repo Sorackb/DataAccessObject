@@ -75,6 +75,19 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
 
     return result;
   }
+  
+  @SuppressWarnings("unchecked")
+  public List<A> readAll(String order, Boolean asc) {
+    LinkedHashMap<String, String> orderBy = new LinkedHashMap<>();
+    String ascText = null;
+    
+    if (!asc) {
+      ascText = "desc";
+    }
+    
+    orderBy.put(order, ascText);
+    return this.readAll(orderBy);
+  }
 
   @SuppressWarnings("unchecked")
   public List<A> readAll(LinkedHashMap<String, String> order) {
