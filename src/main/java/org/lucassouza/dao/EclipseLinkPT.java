@@ -16,62 +16,77 @@ import javax.persistence.Query;
 public class EclipseLinkPT<A> implements BasicPT<A> {
 
   protected EntityManagerFactory entityManagerFactory;
-  protected EntityManager entityManager;
   protected Class<A> objectClass;
 
   public EclipseLinkPT(String persistenceUnitName, HashMap<String, String> properties) {
     this.entityManagerFactory = Persistence.createEntityManagerFactory(
             persistenceUnitName, properties);
-    this.entityManager = this.entityManagerFactory.createEntityManager();
   }
 
   public void create(A object) {
-    this.entityManager.getTransaction().begin();
-    this.entityManager.persist(object);
-    this.entityManager.getTransaction().commit();
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+
+    entityManager.getTransaction().begin();
+    entityManager.persist(object);
+    entityManager.getTransaction().commit();
+
+    entityManager.close();
   }
 
   public void create(List<A> objectList) {
-    this.entityManager.getTransaction().begin();
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+    
+    entityManager.getTransaction().begin();
 
     for (A object : objectList) {
-      this.entityManager.persist(object);
+      entityManager.persist(object);
     }
 
-    this.entityManager.getTransaction().commit();
+    entityManager.getTransaction().commit();
+    
+    entityManager.close();
   }
 
   public A read(Object id) {
-    return this.entityManager.find(this.objectClass, id);
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+    A result = entityManager.find(this.objectClass, id);
+
+    return result;
   }
 
   @SuppressWarnings("unchecked")
   public A read(LinkedHashMap<String, Object> condition,
           LinkedHashMap<String, String> order) {
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     String sql = this.buildQuery(condition, order);
     List<A> queryResult;
     Query query;
+    A result = null;
 
-    query = this.entityManager.createQuery(sql);
+    query = entityManager.createQuery(sql);
     queryResult = query.setFirstResult(0).setMaxResults(1).getResultList();
 
     if (!queryResult.isEmpty()) {
-      return queryResult.get(0);
-    } else {
-      return null;
+      result = queryResult.get(0);
     }
+    
+    entityManager.close();
+    
+    return result;
   }
 
   @SuppressWarnings("unchecked")
   public List<A> readList(LinkedHashMap<String, Object> condition,
           LinkedHashMap<String, String> order) {
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     String sql = this.buildQuery(condition, order);
     List<A> result;
     Query query;
 
-    query = this.entityManager.createQuery(sql);
+    query = entityManager.createQuery(sql);
     this.setParameter(query, condition);
     result = query.getResultList();
+    entityManager.close();
 
     return result;
   }
@@ -91,26 +106,34 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
 
   @SuppressWarnings("unchecked")
   public List<A> readAll(LinkedHashMap<String, String> order) {
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     String sql = this.buildQuery(null, order);
     List<A> result;
     Query query;
 
-    query = this.entityManager.createQuery(sql);
+    query = entityManager.createQuery(sql);
     result = query.getResultList();
+    entityManager.close();
 
     return result;
   }
 
   public void update(A object) {
-    this.entityManager.getTransaction().begin();
-    this.entityManager.merge(object);
-    this.entityManager.getTransaction().commit();
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+
+    entityManager.getTransaction().begin();
+    entityManager.merge(object);
+    entityManager.getTransaction().commit();
+    entityManager.close();
   }
 
   public void delete(A object) {
-    this.entityManager.getTransaction().begin();
-    this.entityManager.remove(object);
-    this.entityManager.getTransaction().commit();
+    EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+
+    entityManager.getTransaction().begin();
+    entityManager.remove(object);
+    entityManager.getTransaction().commit();
+    entityManager.close();
   }
 
   public String buildQuery(LinkedHashMap<String, Object> condition,
