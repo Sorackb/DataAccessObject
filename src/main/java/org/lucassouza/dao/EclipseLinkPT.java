@@ -11,7 +11,7 @@ import javax.persistence.Query;
 /**
  *
  * @author Lucas Souza [sorackb@gmail.com]
- * @param <A>
+ * @param <A> abstract class
  */
 public class EclipseLinkPT<A> implements BasicPT<A> {
 
@@ -23,6 +23,7 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
             persistenceUnitName, properties);
   }
 
+  @Override
   public void create(A object) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
 
@@ -33,9 +34,10 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
     entityManager.close();
   }
 
+  @Override
   public void create(List<A> objectList) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
-    
+
     entityManager.getTransaction().begin();
 
     for (A object : objectList) {
@@ -43,10 +45,11 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
     }
 
     entityManager.getTransaction().commit();
-    
+
     entityManager.close();
   }
 
+  @Override
   public A read(Object id) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     A result = entityManager.find(this.objectClass, id);
@@ -55,6 +58,7 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
   }
 
   @SuppressWarnings("unchecked")
+  @Override
   public A read(LinkedHashMap<String, Object> condition,
           LinkedHashMap<String, String> order) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
@@ -69,13 +73,14 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
     if (!queryResult.isEmpty()) {
       result = queryResult.get(0);
     }
-    
+
     entityManager.close();
-    
+
     return result;
   }
 
   @SuppressWarnings("unchecked")
+  @Override
   public List<A> readList(LinkedHashMap<String, Object> condition,
           LinkedHashMap<String, String> order) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
@@ -90,21 +95,22 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
 
     return result;
   }
-  
+
   @SuppressWarnings("unchecked")
   public List<A> readAll(String order, Boolean asc) {
     LinkedHashMap<String, String> orderBy = new LinkedHashMap<>();
     String ascText = null;
-    
+
     if (!asc) {
       ascText = "desc";
     }
-    
+
     orderBy.put(order, ascText);
     return this.readAll(orderBy);
   }
 
   @SuppressWarnings("unchecked")
+  @Override
   public List<A> readAll(LinkedHashMap<String, String> order) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     String sql = this.buildQuery(null, order);
@@ -118,6 +124,7 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
     return result;
   }
 
+  @Override
   public void update(A object) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
 
@@ -127,6 +134,7 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
     entityManager.close();
   }
 
+  @Override
   public void delete(A object) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
 
@@ -142,11 +150,11 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
     String sqlCondition = this.buildCondition(condition);
     String sqlOrder = this.buildOrder(order);
 
-    if (!sqlCondition.equals("")) {
+    if (!sqlCondition.isEmpty()) {
       result = result + " " + sqlCondition;
     }
 
-    if (!sqlOrder.equals("")) {
+    if (!sqlOrder.isEmpty()) {
       result = result + " " + sqlOrder;
     }
 
@@ -196,7 +204,7 @@ public class EclipseLinkPT<A> implements BasicPT<A> {
         result.append("x.");
         result.append(key);
 
-        if (content != null && !content.equals("")) {
+        if (content != null && !content.isEmpty()) {
           result.append(" ");
           result.append(content);
         }
