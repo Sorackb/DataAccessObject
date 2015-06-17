@@ -1,14 +1,15 @@
 package org.lucassouza.dao;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
  *
  * @author Lucas Souza [sorackb@gmail.com]
- * @param <A>
+ * @param <A extends Serializable>
  */
-public interface BasicPT<A> {
+public interface BasicPT<A extends Serializable> {
 
   void create(A object);
 

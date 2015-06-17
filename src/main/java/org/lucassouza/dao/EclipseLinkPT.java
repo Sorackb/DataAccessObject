@@ -1,5 +1,6 @@
 package org.lucassouza.dao;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,9 +12,9 @@ import javax.persistence.Query;
 /**
  *
  * @author Lucas Souza [sorackb@gmail.com]
- * @param <A> abstract class
+ * @param <A extends Serializable> abstract class
  */
-public class EclipseLinkPT<A> implements BasicPT<A> {
+public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
 
   protected EntityManagerFactory entityManagerFactory;
   protected Class<A> objectClass;
