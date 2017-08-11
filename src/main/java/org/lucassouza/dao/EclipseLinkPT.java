@@ -1,9 +1,9 @@
 package org.lucassouza.dao;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -19,7 +19,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
   protected EntityManagerFactory entityManagerFactory;
   protected Class<A> objectClass;
 
-  public EclipseLinkPT(String persistenceUnitName, HashMap<String, String> properties) {
+  public EclipseLinkPT(String persistenceUnitName, Map<String, String> properties) {
     this.entityManagerFactory = Persistence.createEntityManagerFactory(
             persistenceUnitName, properties);
   }
@@ -60,8 +60,8 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public A read(LinkedHashMap<String, Object> condition,
-          LinkedHashMap<String, String> order) {
+  public A read(Map<String, Object> condition,
+          Map<String, String> order) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     String sql = this.buildQuery(condition, order);
     List<A> queryResult;
@@ -82,8 +82,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public List<A> readList(LinkedHashMap<String, Object> condition,
-          LinkedHashMap<String, String> order) {
+  public List<A> readList(Map<String, Object> condition, Map<String, String> order) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     String sql = this.buildQuery(condition, order);
     List<A> result;
@@ -99,7 +98,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
 
   @SuppressWarnings("unchecked")
   public List<A> readAll(String order, Boolean asc) {
-    LinkedHashMap<String, String> orderBy = new LinkedHashMap<>();
+    Map<String, String> orderBy = new LinkedHashMap<>();
     String ascText = null;
 
     if (!asc) {
@@ -112,7 +111,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public List<A> readAll(LinkedHashMap<String, String> order) {
+  public List<A> readAll(Map<String, String> order) {
     EntityManager entityManager = this.entityManagerFactory.createEntityManager();
     String sql = this.buildQuery(null, order);
     List<A> result;
@@ -145,8 +144,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
     entityManager.close();
   }
 
-  public String buildQuery(LinkedHashMap<String, Object> condition,
-          LinkedHashMap<String, String> order) {
+  public String buildQuery(Map<String, Object> condition, Map<String, String> order) {
     String result = "select x from " + this.objectClass.getSimpleName() + " x";
     String sqlCondition = this.buildCondition(condition);
     String sqlOrder = this.buildOrder(order);
@@ -162,7 +160,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
     return result;
   }
 
-  public void setParameter(Query query, LinkedHashMap<String, Object> condition) {
+  public void setParameter(Query query, Map<String, Object> condition) {
     if (condition != null && !condition.isEmpty()) {
       for (String chave : condition.keySet()) {
         query.setParameter("p" + chave.toLowerCase(), condition.get(chave));
@@ -170,7 +168,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
     }
   }
 
-  public String buildCondition(LinkedHashMap<String, Object> condition) {
+  public String buildCondition(Map<String, Object> condition) {
     StringBuilder result = new StringBuilder();
 
     if (condition != null && !condition.isEmpty()) {
@@ -191,7 +189,7 @@ public class EclipseLinkPT<A extends Serializable> implements BasicPT<A> {
     return result.toString();
   }
 
-  public String buildOrder(LinkedHashMap<String, String> order) {
+  public String buildOrder(Map<String, String> order) {
     StringBuilder result = new StringBuilder();
 
     if (order != null && !order.isEmpty()) {

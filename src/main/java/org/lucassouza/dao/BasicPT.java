@@ -1,8 +1,8 @@
 package org.lucassouza.dao;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -17,11 +17,11 @@ public interface BasicPT<A extends Serializable> {
 
   A read(Object id);
 
-  A read(LinkedHashMap<String, Object> condition, LinkedHashMap<String, String> order);
+  A read(Map<String, Object> condition, Map<String, String> order);
 
-  List<A> readList(LinkedHashMap<String, Object> condition, LinkedHashMap<String, String> order);
+  List<A> readList(Map<String, Object> condition, Map<String, String> order);
 
-  List<A> readAll(LinkedHashMap<String, String> order);
+  List<A> readAll(Map<String, String> order);
 
   void update(A object);
 
